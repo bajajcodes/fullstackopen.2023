@@ -3,7 +3,9 @@ import Filter from './components/Filter'
 import Notification from "./components/Notification"
 import {  searchFilterChange } from './reducers/filterReducer'
 import {  createAnecdote, voteAnecdote } from './reducers/anecdoteReducer';
-import { clearNotification, setNotification } from './reducers/notification.reducer';
+import { clearNotification, setNotification, setTimer, clearTimer } from './reducers/notification.reducer';
+
+
 
 const App = () => {
   const anecdotes = useSelector(state => {
@@ -20,19 +22,22 @@ const App = () => {
     const id = anecdote.id;
     console.log('vote', id);
     dispatch(voteAnecdote({id}));
-    dispatch(setNotification(`Voted for anecdote: ${anecdote.content}.`));
-    setTimeout(() => dispatch(clearNotification()), 5000);
-    dispatch(clearNotification());
+    showNotification(`Voted for anecdote: ${anecdote.content}.`);
   }
 
   const addNewNote = (event) => {
     event.preventDefault();
     const content = event.target.content.value;
     dispatch(createAnecdote(content));
-    dispatch(setNotification(`Created new anecdote: ${content}.`));
-    setTimeout(() => dispatch(clearNotification()), 5000);
-    // dispatch(clearNotification());
+    showNotification(`Created new anecdote: ${content}.`);
         event.target.content.value = "";
+  }
+
+  function showNotification(message){
+    dispatch(clearTimer());
+    dispatch(setNotification(message));
+    const timerId = setTimeout(() => dispatch(clearNotification()), 5000);
+    dispatch(setTimer(timerId));
   }
 
 

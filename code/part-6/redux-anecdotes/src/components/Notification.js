@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux"
 
 const Notification = () => {
-  const notification = useSelector(state => state.notification);
+  const notification = useSelector(state => state.notification.message);
   if(!notification || notification.length < 1 || notification.trim().length < 1) return null;
   const style = {
     border: 'solid',
