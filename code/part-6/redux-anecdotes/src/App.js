@@ -2,8 +2,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import Filter from './components/Filter'
 import Notification from "./components/Notification"
 import {  searchFilterChange } from './reducers/filterReducer'
-import {  createAnecdote, voteAnecdote } from './reducers/anecdoteReducer';
-import { clearNotification, setNotification, setTimer, clearTimer } from './reducers/notification.reducer';
+import {  createAnecdote,  voteAnecdote } from './reducers/anecdoteReducer';
+import { showNotification } from './reducers/notification.reducer';
+import ancedoteService from "./services/anecdotes"
 
 
 
@@ -22,23 +23,18 @@ const App = () => {
     const id = anecdote.id;
     console.log('vote', id);
     dispatch(voteAnecdote({id}));
-    showNotification(`Voted for anecdote: ${anecdote.content}.`);
+   dispatch(showNotification(`Voted for anecdote: ${anecdote.content}.`));
   }
 
-  const addNewNote = (event) => {
+  const addNewNote = async (event) => {
     event.preventDefault();
     const content = event.target.content.value;
-    dispatch(createAnecdote(content));
-    showNotification(`Created new anecdote: ${content}.`);
+    const anecdote = await ancedoteService.createNew(content);
+    dispatch(createAnecdote(anecdote));
+    dispatch(showNotification(`Created new anecdote: ${content}.`));
         event.target.content.value = "";
   }
 
-  function showNotification(message){
-    dispatch(clearTimer());
-    dispatch(setNotification(message));
-    const timerId = setTimeout(() => dispatch(clearNotification()), 5000);
-    dispatch(setTimer(timerId));
-  }
 
 
   return (
