@@ -1,3 +1,5 @@
+import { FILTER_REDUCER_STATES } from "./filterReducer"
+
 const RECUER_STATES = {
   'VOTE': 'VOTE',
   'RESET': 'RESET',
@@ -38,6 +40,11 @@ const reducer = (state = initialState, action) => {
       return state.map(a => a.id === id ? anecdoteToChange : a);
     case RECUER_STATES.NEW_ANECDOTE:
       return [...state, asObject(action.payload.content)]
+    // case FILTER_REDUCER_STATES.SEARCH:
+    //   const filter = action.payload;
+    //   console.log({filter});
+    //   if(filter.length < 1 || filter.trim().length < 1) return state;
+    //   return state.filter(a => a.content.includes(filter));
     case RECUER_STATES.RESET:
         return initialState
     default: return state;

@@ -1,8 +1,14 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { createAnecdote, voteAnecdote } from './reducers/anecdoteReducer'
+import Filter from './components/Filter'
+import { searchFilterChange } from './reducers/filterReducer'
 
 const App = () => {
-  const anecdotes = useSelector(state => [...state].sort((a, b) => b.votes - a.votes))
+  const anecdotes = useSelector(state => {
+    if(!state.filter.search) return state.anecdotes
+    return state.anecdotes.filter(a => a.content.includes(state.filter.search));
+  });
+  const sortedAnecdotes = [...anecdotes].sort((a, b) => b.votes - a.votes);
   const dispatch = useDispatch()
 
   const vote = (id) => {
@@ -21,7 +27,8 @@ const App = () => {
   return (
     <div>
       <h2>Anecdotes</h2>
-      {anecdotes.map(anecdote =>
+      <Filter onFilterChange={(filter) => dispatch(searchFilterChange(filter))} />
+      {sortedAnecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
