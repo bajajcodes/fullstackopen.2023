@@ -1,9 +1,4 @@
-const RECUER_STATES = {
-  'VOTE': 'VOTE',
-  'RESET': 'RESET',
-  'NEW_ANECDOTE':'NEW_ANECDOTE'
-}
-
+import {createSlice} from "@reduxjs/toolkit"
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -23,47 +18,28 @@ const asObject = (anecdote) => {
     votes: 0
   }
 }
-
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
 
-  switch(action.type){
-    case RECUER_STATES.VOTE:
+const anecdotesSlice = createSlice({
+  name: "anecdotes",
+  initialState,
+  reducers: {
+    createAnecdote(state, action){
+      const content = action.payload;
+      const anecdote = asObject(content);
+      state.push(anecdote);
+    },
+    voteAnecdote(state, action){
       const id = action.payload.id;
       const anecdoteToVote = state.find(a => a.id === id);
       const anecdoteToChange = {...anecdoteToVote, votes: anecdoteToVote.votes + 1}
       return state.map(a => a.id === id ? anecdoteToChange : a);
-    case RECUER_STATES.NEW_ANECDOTE:
-      return [...state, asObject(action.payload.content)]
-    case RECUER_STATES.RESET:
-        return initialState
-    default: return state;
-
+    }
   }
+})
 
-}
 
-export function voteAnecdote(id){
-  return {
-    type: RECUER_STATES.VOTE,
-    payload: {id}
-  }
-}
 
-export function reset(){
-  return {
-    type: RECUER_STATES.RESET
-  }
-}
-
-export function createAnecdote(content){
-  return {
-    type: RECUER_STATES.NEW_ANECDOTE,
-    payload: {content}
-  }
-}
-
-export default reducer
+export default anecdotesSlice.reducer;
+export const {createAnecdote, voteAnecdote} = anecdotesSlice.actions
