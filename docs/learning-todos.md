@@ -7,7 +7,21 @@ This lists all the topics  which are supposed to get comfortable with, for futur
 - [Part-1: Introduction to React](part-1.md)
 - [Part-2: Communicating with server](part-2.md)
 - [Part-3: Programming a server with NodeJS and Express](part-3.md)
+
 - [Part-4: Testing Express servers, user administration](part-4.md)
+    - [ ] [Use a Node HTTPS server in our application instead of the HTTP server](https://fullstackopen.com/en/part4/token_authentication#end-notes)
+    - [ ] [how-to-safely-store-a-password](https://codahale.com/how-to-safely-store-a-password/)
+    - [ ] [The Ins and Outs of Token-Based Authentication
+](https://www.digitalocean.com/community/tutorials/the-ins-and-outs-of-token-based-authentication#how-token-based-works)
+    - [ ] [Node JsonWebToken](https://github.com/auth0/node-jsonwebtoken)
+    - [ ] [oAuth Json Web Token](https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html)
+    - [ ] [TDD](https://en.wikipedia.org/wiki/Test-driven_development)
+    - [ ] [Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
+    - [ ] [HTTP Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#authentication_schemes)
+    - [ ] [Express JWT](https://www.npmjs.com/package/express-jwt)
+    - [ ] [Node Bcrypt](https://github.com/kelektiv/node.bcrypt.js)
+
+
 - [Part-5: Testing React apps](part-5.md)
     - [ ] [Snapshot Testing](https://jestjs.io/docs/snapshot-testing)
     - [ ] [Cypress](https://docs.cypress.io/)
