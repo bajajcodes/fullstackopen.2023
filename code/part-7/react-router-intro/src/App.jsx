@@ -9,19 +9,46 @@ import {
 } from "react-router-dom";
 import { useState } from "react";
 import {
-  Container,
   TableContainer,
   Table,
   TableBody,
   TableRow,
   TableCell,
   Paper,
-  TextField,
-  Button,
   Alert,
-  AppBar,
-  Toolbar,
 } from "@mui/material";
+import styled from "styled-components";
+
+const Button = styled.button`
+  background: Bisque;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid Chocolate;
+  border-radius: 3px;
+`;
+
+const Input = styled.input`
+  margin: 0.25em;
+`;
+
+const Page = styled.div`
+  padding: 1em;
+  background: papayawhip;
+`;
+
+const Navigation = styled.div`
+  background: BluryWood;
+  padding: 1em;
+`;
+
+const Footer = styled.div`
+  background: Chocolate;
+  padding: 1em;
+  margin-top: 1em;
+`;
+
+const padding = { padding: "0.25em" };
 
 const Home = () => (
   <div>
@@ -98,13 +125,15 @@ const Login = (props) => {
       <form onSubmit={onSubmit}>
         <>
           <div>
-            <TextField label="username" />
+            username:
+            <Input />
           </div>
           <div>
-            <TextField label="password" type="password" />
+            password:
+            <Input />
           </div>
           <div>
-            <Button variant="contained" color="primary" type="submit">
+            <Button type="submit" primary="">
               login
             </Button>
           </div>
@@ -155,28 +184,26 @@ export default function App() {
     : null;
 
   return (
-    <Container>
+    <Page>
       <>
-        <AppBar position="static">
-          <Toolbar>
-            <Button color="inherit" component={Link} to="/">
-              home
-            </Button>
-            <Button color="inherit" component={Link} to="/notes">
-              notes
-            </Button>
-            <Button color="inherit" component={Link} to="/users">
-              users
-            </Button>
-            {user ? (
-              <em>{user} logged in</em>
-            ) : (
-              <Button color="inherit" component={Link} to="/login">
-                login
-              </Button>
-            )}
-          </Toolbar>
-        </AppBar>
+        <Navigation>
+          <Link style={padding} to="/">
+            home
+          </Link>
+          <Link style={padding} to="/notes">
+            notes
+          </Link>
+          <Link style={padding} to="/users">
+            users
+          </Link>
+          {user ? (
+            <em>{user} logged in</em>
+          ) : (
+            <Link style={padding} to="/login">
+              login
+            </Link>
+          )}
+        </Navigation>
 
         {message && <Alert severity="success">{message}</Alert>}
 
@@ -191,10 +218,9 @@ export default function App() {
           <Route path="/" element={<Home />} />
         </Routes>
       </>
-      <footer>
-        <br />
-        <em>Note app, Department of Computer Science 2023</em>
-      </footer>
-    </Container>
+      <Footer>
+        <em>Note app, Department of Computer Science 2022</em>
+      </Footer>
+    </Page>
   );
 }
