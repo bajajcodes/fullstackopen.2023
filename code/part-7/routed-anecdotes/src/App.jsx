@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react'
 import {Routes, Route, Link, useMatch, useNavigate} from "react-router-dom";
+import { useFields} from "./hooks"
 
 const padding = {
   paddingRight: 5
@@ -20,6 +21,12 @@ const menuItems = [
     text: "about",
   },
 ]
+
+const formFields = [
+  {name: "content", type: "text", label: "content"}, 
+  {name: "author", type: "text", label: "author"}, 
+  {name: "info", type: "text", label: "url for more info"}
+];
 
 
 const Menu = () => {
@@ -75,38 +82,28 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
-
+  const {fields, values, onChange, reset} = useFields(formFields);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.addNew({
-      content,
-      author,
-      info,
-      votes: 0
-    })
+    const newAnecdote = formFields.reduce((acc, {name}) => ({...acc, [name]: values[name] || ""}), {votes: 0});
+    props.addNew(newAnecdote)
   }
 
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
-        </div>
-        <div>
-          author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
-        </div>
-        <div>
-          url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
-        </div>
-        <button>create</button>
+        {
+          fields.map(({label, ...field}) => (
+            <div key={field.name}>
+            {label}
+            <input {...field} onChange={onChange} value={values[field.name]}  />
+          </div>
+          ) )
+        }
+        <button type="submit">create</button>
+        <button onClick={() => reset()} type="button">reset</button>
       </form>
     </div>
   )
@@ -141,9 +138,6 @@ const App = () => {
     setTimeout(() => setNotification(''), 5000);
     navigate("/anecdotes");
   }
-
-  // const anecdoteById = (id) =>
-  //   anecdotes.find(a => a.id === id)
 
   // const vote = (id) => {
   //   const anecdote = anecdoteById(id)
