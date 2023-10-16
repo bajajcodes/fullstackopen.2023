@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react'
-import {Routes, Route, Link} from "react-router-dom";
+import {Routes, Route, Link, useMatch} from "react-router-dom";
 
 const padding = {
   paddingRight: 5
@@ -36,8 +36,19 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
     </ul>
+  </div>
+)
+
+const Anecdote = ({anecdote}) => (
+  <div>
+    <div>
+      <h2>{anecdote.content}</h2>
+      <div>{anecdote.author}</div>
+      <div>Votes: <strong>{anecdote.votes}</strong></div>
+      <div>for more info see <Link to={anecdote.info}>{anecdote.info}</Link></div>
+    </div>
   </div>
 )
 
@@ -49,7 +60,7 @@ const About = () => (
     <em>An anecdote is a brief, revealing account of an individual person or an incident.
       Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
       such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
-      An anecdote is "a story with a point."</em>
+      An anecdote is ``a story with a point.``</em>
 
     <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
   </div>
@@ -120,37 +131,38 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+  // const [notification, setNotification] = useState('')
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
   }
 
-  const anecdoteById = (id) =>
-    anecdotes.find(a => a.id === id)
+  // const anecdoteById = (id) =>
+  //   anecdotes.find(a => a.id === id)
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id)
+  // const vote = (id) => {
+  //   const anecdote = anecdoteById(id)
 
-    const voted = {
-      ...anecdote,
-      votes: anecdote.votes + 1
-    }
+  //   const voted = {
+  //     ...anecdote,
+  //     votes: anecdote.votes + 1
+  //   }
 
-    setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
-  }
+  //   setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
+  // }
 
+  const match = useMatch("/anecdotes/:id");
+  const anecdote = match ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id)) : null;
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-      {/* <AnecdoteList anecdotes={anecdotes} /> */}
-      {/* <About /> */}
       <Routes>
+      <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
+      <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
       <Route path='/create' element={<CreateNew addNew={addNew} />} />
       <Route path="/about" element={<About />} />
-      <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
       <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
       </Routes>
       <Footer />
