@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import {
   Routes, Route, Link,   Navigate,
-  useParams,
   useNavigate,
+  useMatch,
 } from 'react-router-dom'
 import { useState } from 'react'
 
@@ -15,9 +15,7 @@ const Home = () => (
   </div>
 )
 
-const Note = ({ notes }) => {
-  const id = useParams().id
-  const note = notes.find(n => n.id === Number(id))
+const Note = ({ note }) => {
   return (
     <div>
       <h2>{note.content}</h2>
@@ -101,7 +99,8 @@ const initialNotes = [
 
 
 export default function App() {
-  const [notes, setNotes] = useState(() => initialNotes)
+  // eslint-disable-next-line no-unused-vars
+  const [notes, _] = useState(() => initialNotes)
 
   const [user, setUser] = useState(null)
 
@@ -112,6 +111,10 @@ export default function App() {
   const padding = {
     padding: 5
   }
+
+  const match = useMatch("/notes/:id");
+  const note = match ? notes.find(note => note.id === Number(match.params.id)) : null;
+
   return (
     <div>
       <>
@@ -126,7 +129,7 @@ export default function App() {
         </div>
 
         <Routes>
-          <Route path="/notes/:id" element={<Note notes={notes} />} />  
+          <Route path="/notes/:id" element={<Note note={note} />} />  
           <Route path="/notes" element={<Notes notes={notes} />} />   
           <Route path="/users" element={user ? <Users /> : <Navigate replace to="/login" />} />
           <Route path="/login" element={<Login onLogin={login} />} />
