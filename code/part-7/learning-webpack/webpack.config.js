@@ -7,6 +7,12 @@ const config = () => {
       path: path.resolve(__dirname, "build"),
       filename: "main.js",
     },
+    devServer: {
+      port: 3000,
+      compress: true,
+      static: path.resolve(__dirname, "build"),
+    },
+    devtool: 'source-map',
     module: {
       rules: [
         {

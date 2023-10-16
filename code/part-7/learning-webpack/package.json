@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "practising webpack",
   "scripts": {
-    "build": "webpack --mode=development"
+    "build": "webpack --mode=development",
+    "start": "webpack serve --mode=development"
   },
   "license": "MIT",
   "devDependencies": {
@@ -14,7 +15,8 @@
     "css-loader": "^6.8.1",
     "style-loader": "^3.3.3",
     "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
     "core-js": "^3.33.0",
