@@ -1,14 +1,33 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react'
+import {Routes, Route, Link} from "react-router-dom";
+
+const padding = {
+  paddingRight: 5
+}
+
+const menuItems = [
+  {
+    to: "/anecdotes",
+    text: "anecdotes",
+  },
+  {
+    to: "/create",
+    text: "create new",
+  },
+  {
+    to: "/about",
+    text: "about",
+  },
+]
+
 
 const Menu = () => {
-  const padding = {
-    paddingRight: 5
-  }
   return (
     <div>
-      <a href='#' style={padding}>anecdotes</a>
-      <a href='#' style={padding}>create new</a>
-      <a href='#' style={padding}>about</a>
+      {
+        menuItems.map(item => (<Link key={item.text} to={item.to} style={padding}>{item.text}</Link>))
+      }
     </div>
   )
 }
@@ -126,9 +145,14 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
+      {/* <AnecdoteList anecdotes={anecdotes} /> */}
+      {/* <About /> */}
+      <Routes>
+      <Route path='/create' element={<CreateNew addNew={addNew} />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
+      <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+      </Routes>
       <Footer />
     </div>
   )
