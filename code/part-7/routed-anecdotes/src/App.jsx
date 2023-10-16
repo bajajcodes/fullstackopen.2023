@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react'
-import {Routes, Route, Link, useMatch} from "react-router-dom";
+import {Routes, Route, Link, useMatch, useNavigate} from "react-router-dom";
 
 const padding = {
   paddingRight: 5
@@ -81,7 +81,7 @@ const CreateNew = (props) => {
 
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     props.addNew({
       content,
       author,
@@ -129,13 +129,17 @@ const App = () => {
       votes: 0,
       id: 2
     }
-  ])
+  ]);
+  const navigate = useNavigate();
 
-  // const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState('')
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
-    setAnecdotes(anecdotes.concat(anecdote))
+    setAnecdotes(anecdotes.concat(anecdote));
+    setNotification(`Succesfully created anecodte: ${anecdote.content}`);
+    setTimeout(() => setNotification(''), 5000);
+    navigate("/anecdotes");
   }
 
   // const anecdoteById = (id) =>
@@ -158,12 +162,15 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      {
+        notification && <h3>{notification}</h3>
+      }
       <Routes>
-      <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
-      <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
-      <Route path='/create' element={<CreateNew addNew={addNew} />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
+        <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path='/create' element={<CreateNew addNew={addNew} />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
       </Routes>
       <Footer />
     </div>
