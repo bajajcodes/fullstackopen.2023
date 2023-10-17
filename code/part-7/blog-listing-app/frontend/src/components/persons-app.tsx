@@ -3,6 +3,9 @@ import Filter from "./filter";
 import PersonForm from "./person-form";
 import Persons from "./persons";
 import personsService from "../services/persons";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { showNotification } from "../reducers/notification.reducer";
 
 export type Person = {
   name: string;
@@ -19,7 +22,10 @@ export interface PersonsAppProps {
 const PersonsApp = () => {
   const [persons, setPersons] = useState<PersonsCollection>([]);
   const [searchInput, setSearchInput] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const notification = useSelector(
+    (state: RootState) => state.notification.message
+  );
+  const dispatch = useDispatch();
 
   function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -50,10 +56,14 @@ const PersonsApp = () => {
               p.id !== retunredPerson.id ? p : retunredPerson
             )
           );
-          setErrorMessage("");
+          dispatch(
+            showNotification(
+              `${person.name} phone number replaced with ${person.number}`
+            )
+          );
         })
         .catch((error) => {
-          setErrorMessage(error.response.data.error);
+          dispatch(showNotification(error.response.data.error));
         });
     }
 
@@ -62,15 +72,16 @@ const PersonsApp = () => {
         .create(person)
         .then((returnedPerson) => {
           setPersons(persons.concat(returnedPerson));
-          setErrorMessage("");
+          dispatch(showNotification(`${person.name} added to phonebook`));
         })
         .catch((error) => {
-          setErrorMessage(error.response.data.error);
+          dispatch(showNotification(error.response.data.error));
         });
     }
 
     event.currentTarget.reset();
   }
+
   function handleFilterInputChange(value: string) {
     setSearchInput(value.toLowerCase());
   }
@@ -98,9 +109,9 @@ const PersonsApp = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      {errorMessage && (
-        <section className="error-message">
-          <h3>{errorMessage}</h3>
+      {notification && (
+        <section className="error-message notification">
+          <h3>{notification}</h3>
         </section>
       )}
       <Filter setSearchInput={handleFilterInputChange} />
