@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import LoginForm from "./components/LoginForm";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "@reduxjs/toolkit";
+import { useSelector, useDispatch } from "react-redux";
 import BlogForm from "./components/BlogForm";
 import constants from "./utils/constants";
 import blogService from "./service/blog.service";
@@ -34,6 +34,7 @@ function App() {
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const notification = useSelector((state) => state.notification);
+  const dispatch = useDispatch();
 
   const blogFormRef = useRef();
 
@@ -42,20 +43,22 @@ function App() {
     window.localStorage.removeItem(constants.BROWSER_STORAGE_USER_NAME_kEY);
   }
 
+  function showNotificationWrapper(message) {
+    dispatch(showNotification(message));
+  }
+
   const addBlog = async (blogObject) => {
     try {
       setIsLoading(true);
       blogFormRef.current.toggleVisibility();
       const response = await blogService.create(blogObject);
-      showNotification(
+      showNotificationWrapper(
         `successfully added ${response.title} as blog list item`
       );
       await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
-      showNotification(
-        `successfully added ${response.title} as blog list item`
-      );
+      showNotificationWrapper(message);
     } finally {
       setIsLoading(false);
     }
@@ -70,10 +73,10 @@ function App() {
       );
       blogService.setToken(user.token);
       setUser?.(user);
-      showNotification(`successfully logged in, ${user.name}`);
+      showNotificationWrapper(`successfully logged in, ${user.name}`);
     } catch (error) {
       const message = helpers.getErrorMessage(error);
-      showNotification(message);
+      showNotificationWrapper(message);
     }
   };
 
@@ -82,11 +85,13 @@ function App() {
     try {
       setIsLoading(true);
       const response = await blogService.update(id, blogObject);
-      showNotification(`successfully increased likes, for ${response.title}`);
+      showNotificationWrapper(
+        `successfully increased likes, for ${response.title}`
+      );
       await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
-      showNotification(message);
+      showNotificationWrapper(message);
     } finally {
       setIsLoading(false);
     }
@@ -108,14 +113,11 @@ function App() {
       setIsLoading(true);
       if (!window.confirm(`Remove blog ${blogObject.title}`)) return;
       const response = await blogService.remove(id);
-      showNotification({
-        type: "info",
-        message: `successfully deleted, ${response.title}`,
-      });
+      showNotificationWrapper(`successfully deleted, ${response.title}`);
       await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
-      showNotification({ type: "error", message });
+      showNotificationWrapper(message);
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +139,7 @@ function App() {
   return (
     <Container maxW="container.md" centerContent>
       <Heading as="h1">Blog Listing App</Heading>
-      {notification && (
+      {notification.message && (
         <Alert status={notification.type || "info"}>
           <AlertIcon /> {notification.message}
         </Alert>
