@@ -73,3 +73,7 @@ button:focus-visible {
   border: 2px solid red;
   background-color: grey;
 }
+
+.notification {
+  border: 2px solid greenyellow;
+}
