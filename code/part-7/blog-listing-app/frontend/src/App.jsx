@@ -48,8 +48,8 @@ function App() {
   }
 
   const addBlog = async (blogObject) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       blogFormRef.current.toggleVisibility();
       const response = await blogService.create(blogObject);
       showNotificationWrapper(
@@ -82,8 +82,8 @@ function App() {
 
   // TODO: update likes on local first
   const increaseLikes = async (id, blogObject) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await blogService.update(id, blogObject);
       showNotificationWrapper(
         `successfully increased likes, for ${response.title}`
@@ -100,20 +100,20 @@ function App() {
   const getBlogs = async () => {
     const blogList = await blogService.getAll();
     setBlogs(blogList);
-    setIsLoading(false);
   };
 
   const onRefresh = async () => {
     setIsLoading(true);
     await getBlogs();
+    setIsLoading(false);
   };
 
   const removeBlog = async (id, blogObject) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       if (!window.confirm(`Remove blog ${blogObject.title}`)) return;
-      const response = await blogService.remove(id);
-      showNotificationWrapper(`successfully deleted, ${response.title}`);
+      await blogService.remove(id);
+      showNotificationWrapper(`successfully deleted, ${blogObject.title}`);
       await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
@@ -135,7 +135,7 @@ function App() {
   }, []);
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
-
+  
   return (
     <Container maxW="container.md" centerContent>
       <Heading as="h1">Blog Listing App</Heading>

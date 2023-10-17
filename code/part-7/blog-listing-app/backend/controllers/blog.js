@@ -57,7 +57,7 @@ blogRouter.post(
   }
 );
 
-blogRouter.put("/:id", async (request, response) => {
+blogRouter.put("/:id", middleware.verifyToken, async (request, response) => {
   const id = request.params.id;
   const payload = request.body;
 

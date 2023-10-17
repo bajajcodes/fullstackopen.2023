@@ -1,7 +1,7 @@
 import axios from "axios";
 import constants from "../utils/constants";
 
-const API_URL = `${constants.API_BASE_URL}/blogs/`;
+const API_URL = `${constants.API_BASE_URL}/blogs`;
 let token = null;
 
 const setToken = (newToken) => {
@@ -34,11 +34,11 @@ const update = async (id, payload) => {
   return response.data;
 };
 
-const remove = async (id, payload) => {
+const remove = async (id) => {
   const config = {
     headers: { Authorization: token },
   };
-  const response = await axios.delete(`${API_URL}/${id}`, payload, config);
+  const response = await axios.delete(`${API_URL}/${id}`, config);
   return response.data;
 };
 
