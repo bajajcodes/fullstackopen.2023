@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import LoginForm from "./components/LoginForm";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "@reduxjs/toolkit";
 import BlogForm from "./components/BlogForm";
 import constants from "./utils/constants";
 import blogService from "./service/blog.service";
@@ -17,8 +18,7 @@ import loginService from "./service/login.service";
 import helpers from "./utils/helpers";
 import BlogList from "./components/BlogList";
 import Togglable from "./components/Togglable";
-
-let notificationTimeoutId = null;
+import { showNotification } from "./reducers/notification.reducer";
 
 function App() {
   /**
@@ -31,9 +31,9 @@ function App() {
    * type: 'info'  | 'error'
    * message
    */
-  const [notification, setNotification] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const notification = useSelector((state) => state.notification);
 
   const blogFormRef = useRef();
 
@@ -42,26 +42,20 @@ function App() {
     window.localStorage.removeItem(constants.BROWSER_STORAGE_USER_NAME_kEY);
   }
 
-  function showNotification({ type = "info", message }) {
-    if (!message || (message?.trim()?.length || 0) < 1) return;
-    if (notificationTimeoutId) clearTimeout(notificationTimeoutId);
-    setNotification({ type, message });
-    notificationTimeoutId = setTimeout(() => setNotification(null), 5000);
-  }
-
   const addBlog = async (blogObject) => {
     try {
       setIsLoading(true);
       blogFormRef.current.toggleVisibility();
       const response = await blogService.create(blogObject);
-      showNotification({
-        type: "info",
-        message: `successfully added ${response.title} as blog list item`,
-      });
+      showNotification(
+        `successfully added ${response.title} as blog list item`
+      );
       await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
-      showNotification({ type: "error", message });
+      showNotification(
+        `successfully added ${response.title} as blog list item`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -76,13 +70,10 @@ function App() {
       );
       blogService.setToken(user.token);
       setUser?.(user);
-      showNotification({
-        type: "info",
-        message: `successfully logged in, ${user.name}`,
-      });
+      showNotification(`successfully logged in, ${user.name}`);
     } catch (error) {
       const message = helpers.getErrorMessage(error);
-      showNotification({ type: "error", message });
+      showNotification(message);
     }
   };
 
@@ -91,14 +82,11 @@ function App() {
     try {
       setIsLoading(true);
       const response = await blogService.update(id, blogObject);
-      showNotification({
-        type: "info",
-        message: `successfully increased likes, for ${response.title}`,
-      });
+      showNotification(`successfully increased likes, for ${response.title}`);
       await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
-      showNotification({ type: "error", message });
+      showNotification(message);
     } finally {
       setIsLoading(false);
     }
@@ -150,7 +138,7 @@ function App() {
     <Container maxW="container.md" centerContent>
       <Heading as="h1">Blog Listing App</Heading>
       {notification && (
-        <Alert status={notification.type}>
+        <Alert status={notification.type || "info"}>
           <AlertIcon /> {notification.message}
         </Alert>
       )}
