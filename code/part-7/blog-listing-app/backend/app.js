@@ -25,7 +25,7 @@ app.use(cors());
 app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
-// app.use(express.static("dist"));
+app.use(express.static("dist"));
 
 app.get("/", (_, response) =>
   response.send("<h1> Welcome to blog list app backend </h1>")
