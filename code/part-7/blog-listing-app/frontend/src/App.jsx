@@ -19,6 +19,7 @@ import helpers from "./utils/helpers";
 import BlogList from "./components/BlogList";
 import Togglable from "./components/Togglable";
 import { showNotification } from "./reducers/notification.reducer";
+import * as blogActions from "./reducers/blogs.reducer";
 
 function App() {
   /**
@@ -31,9 +32,9 @@ function App() {
    * type: 'info'  | 'error'
    * message
    */
-  const [blogs, setBlogs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const notification = useSelector((state) => state.notification);
+  const { data: blogs, status } = useSelector((state) => state.blogs);
+  const isLoading = status === "loading";
   const dispatch = useDispatch();
 
   const blogFormRef = useRef();
@@ -47,20 +48,21 @@ function App() {
     dispatch(showNotification(message));
   }
 
+  function getBlogsWrapper() {
+    dispatch(blogActions.getBlogs());
+  }
+
   const addBlog = async (blogObject) => {
-    setIsLoading(true);
     try {
       blogFormRef.current.toggleVisibility();
-      const response = await blogService.create(blogObject);
+      dispatch(blogActions.saveNewBlog(blogObject));
+      getBlogsWrapper();
       showNotificationWrapper(
-        `successfully added ${response.title} as blog list item`
+        `successfully added ${blogObject.title} as blog list item`
       );
-      await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
       showNotificationWrapper(message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -82,44 +84,30 @@ function App() {
 
   // TODO: update likes on local first
   const increaseLikes = async (id, blogObject) => {
-    setIsLoading(true);
     try {
-      const response = await blogService.update(id, blogObject);
+      dispatch(blogActions.updateBlog({ blogObject, id }));
+      getBlogsWrapper();
       showNotificationWrapper(
-        `successfully increased likes, for ${response.title}`
+        `successfully increased likes, for ${blogObject.title}`
       );
-      await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
       showNotificationWrapper(message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const getBlogs = async () => {
-    const blogList = await blogService.getAll();
-    setBlogs(blogList);
-  };
-
-  const onRefresh = async () => {
-    setIsLoading(true);
-    await getBlogs();
-    setIsLoading(false);
+  const onRefresh = () => {
+    getBlogsWrapper();
   };
 
   const removeBlog = async (id, blogObject) => {
-    setIsLoading(true);
     try {
       if (!window.confirm(`Remove blog ${blogObject.title}`)) return;
-      await blogService.remove(id);
+      dispatch(blogActions.removeBlog(id));
       showNotificationWrapper(`successfully deleted, ${blogObject.title}`);
-      await getBlogs();
     } catch (error) {
       const message = helpers.getErrorMessage(error);
       showNotificationWrapper(message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -131,11 +119,11 @@ function App() {
     const user = JSON.parse(loggedUserJSON);
     setUser(user);
     blogService.setToken(user.token);
-    getBlogs();
+    getBlogsWrapper();
   }, []);
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
-  
+
   return (
     <Container maxW="container.md" centerContent>
       <Heading as="h1">Blog Listing App</Heading>
