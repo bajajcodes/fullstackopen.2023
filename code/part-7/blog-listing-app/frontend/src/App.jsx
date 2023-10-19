@@ -17,12 +17,29 @@ import AuthContext from "./contexts/auth.context";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Root from "./routes/root";
 import ErrorPage from "./routes/error-page";
+import UserList from "./routes/user-list";
+import usersService from "./service/users.service";
+
+async function userListLoader() {
+  return await usersService.getAll();
+}
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
+  },
+  {
+    path: "blogs",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "users",
+    element: <UserList />,
+    errorElement: <ErrorPage />,
+    loader: userListLoader,
   },
 ]);
 
