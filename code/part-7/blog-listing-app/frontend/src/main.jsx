@@ -5,15 +5,22 @@ import { Provider } from "react-redux";
 import store from "./app/store";
 import App from "./App.jsx";
 import NotificationContextProvider from "./providers/notification.provider";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+
+const client = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ChakraProvider resetCSS>
-      <NotificationContextProvider>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </NotificationContextProvider>
+      <QueryClientProvider client={client}>
+        <NotificationContextProvider>
+          <Provider store={store}>
+            <App />
+          </Provider>
+        </NotificationContextProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </ChakraProvider>
   </React.StrictMode>
 );

@@ -26,7 +26,19 @@ const create = async (payload) => {
   return response.data;
 };
 
-const update = async (id, payload) => {
+const update = async (...rest) => {
+  let id, payload;
+  // fallback and legacy support
+  if (rest.length === 1) {
+    id = rest[0].id;
+    payload = { ...rest[0] };
+    delete payload["id"];
+  }
+  if (rest.length === 2) {
+    id = rest[0];
+    payload = rest[1];
+  }
+
   const config = {
     headers: { Authorization: token },
   };
