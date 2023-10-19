@@ -36,9 +36,9 @@ const config = (env, argv) => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        BACKEND_URL: JSON.stringify(backend_url)
-      })
-    ]
+        BACKEND_URL: JSON.stringify(backend_url),
+      }),
+    ],
   };
 };
 

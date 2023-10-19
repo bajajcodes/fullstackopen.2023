@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiY2RlZmdoIiwiaWQiOiI2NTE4NGYxYTlmMmQzY2Y0MzM3NTBmNDIiLCJpYXQiOjE2OTYwOTI2Mzl9.zVehxlWxbZrR7mmebiXpn7SlHCCzAoR0EvXGQDNx4hM
+
+{
+    "title": "$$$$$$",
+    "author": "$$$$$$$$$$$$$$",
+    "url": "https://shmbajaj.dev",
+    "likes": 56904
+  }
