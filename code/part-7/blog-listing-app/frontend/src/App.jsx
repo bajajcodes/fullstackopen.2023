@@ -9,31 +9,28 @@ import {
   Text,
 } from "@chakra-ui/react";
 import LoginForm from "./components/LoginForm";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import BlogForm from "./components/BlogForm";
 import helpers from "./utils/helpers";
 import BlogList from "./components/BlogList";
 import Togglable from "./components/Togglable";
-import { showNotification } from "./reducers/notification.reducer";
 import * as blogActions from "./reducers/blogs.reducer";
 import * as userActions from "./reducers/user.reducer";
+import NotificationContext from "./contexts/notification.context";
 
 function App() {
-  /**
-   * type: 'info'  | 'error'
-   * message
-   */
-  const notification = useSelector((state) => state.notification);
+  const { getNotification, setNotification } = useContext(NotificationContext);
   const { data: blogs, status } = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
-  const isLoading = status === "loading";
   const dispatch = useDispatch();
-
   const blogFormRef = useRef();
 
+  const notification = getNotification();
+  const isLoading = status === "loading";
+
   function showNotificationWrapper(message) {
-    dispatch(showNotification(message));
+    setNotification(message);
   }
 
   function getBlogsWrapper() {
@@ -100,6 +97,7 @@ function App() {
   useEffect(() => {
     dispatch(userActions.reLoginUser());
     getBlogsWrapper();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
@@ -107,9 +105,9 @@ function App() {
   return (
     <Container maxW="container.md" centerContent>
       <Heading as="h1">Blog Listing App</Heading>
-      {notification.message && (
+      {notification && (
         <Alert status={notification.type || "info"}>
-          <AlertIcon /> {notification.message}
+          <AlertIcon /> {notification}
         </Alert>
       )}
       {!user && (

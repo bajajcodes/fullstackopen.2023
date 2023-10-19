@@ -63,7 +63,7 @@ export default function Blog(props) {
                   variant="solid"
                   aria-label="like-blog"
                   onClick={() =>
-                    onIncreaseLikes(props.id, { likes: likes + 1 })
+                    onIncreaseLikes(props.id, { title, likes: likes + 1 })
                   }
                 >
                   Like
