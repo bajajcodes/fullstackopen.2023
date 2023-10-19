@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import constants from "../utils/constants";
 import blogService from "../service/blog.service";
 import loginService from "../service/login.service";
