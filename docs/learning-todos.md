@@ -5,7 +5,12 @@ This lists all the topics  which are supposed to get comfortable with, for futur
 ## Get Started
 - [Part-0: Fundamentals of Web apps](part-0.md)
 - [Part-1: Introduction to React](part-1.md)
+
 - [Part-2: Communicating with server](part-2.md)
+    - [ ] [JSON Server](https://github.com/typicode/json-server)
+    - [ ] [REST Wiki](https://en.wikipedia.org/wiki/REST)
+    - [ ] [JSON Server Routes Ideology](https://github.com/typicode/json-server#routes)
+    
 - [Part-3: Programming a server with NodeJS and Express](part-3.md)
 
 - [Part-4: Testing Express servers, user administration](part-4.md)
