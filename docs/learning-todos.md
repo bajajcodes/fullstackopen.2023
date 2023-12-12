@@ -10,8 +10,19 @@ This lists all the topics  which are supposed to get comfortable with, for futur
     - [ ] [JSON Server](https://github.com/typicode/json-server)
     - [ ] [REST Wiki](https://en.wikipedia.org/wiki/REST)
     - [ ] [JSON Server Routes Ideology](https://github.com/typicode/json-server#routes)
-    
+
 - [Part-3: Programming a server with NodeJS and Express](part-3.md)
+    - [ ] [HTTP Requests Types](https://fullstackopen.com/en/part3/node_js_and_express#about-http-request-types)
+    - [ ] [Understanding NPM Dependency Model](https://lexi-lambda.github.io/blog/2016/08/24/understanding-the-npm-dependency-model/)
+    - [ ] [Morgan Request Logger Docs](https://github.com/expressjs/morgan)
+    - [ ] [REST Arch Style `!important``](https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+    - [ ] [Intro To Sentry](https://sentry.io/welcome/)
+    - [ ] [ExpresJs Error Handling](https://expressjs.com/en/guide/error-handling.html)
+    - [ ] [MoongooseJS Docs](https://mongoosejs.com/)
+    - [ ] [Code Walktrough Dotenv](https://github.com/motdotla/dotenv#readme)
+    - [ ] [NoSQL Wiki Page](https://en.wikipedia.org/wiki/NoSQL)
+    - [ ] [Document-oriented database Wiki Page](https://en.wikipedia.org/wiki/Document-oriented_database)
+    - [ ] []()
 
 - [Part-4: Testing Express servers, user administration](part-4.md)
     - [ ] [Use a Node HTTPS server in our application instead of the HTTP server](https://fullstackopen.com/en/part4/token_authentication#end-notes)
