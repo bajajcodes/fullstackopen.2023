@@ -10,127 +10,162 @@ This part contains total of 4 sections:
 
 - Validation and ESLint
 
-
 ## Node.js and Express
+
 ### Introduction to Node.js
+
 - Node.js as a runtime environment for JavaScript on the server.
 - Utilizes the V8 engine for JavaScript.
 
 ### Creating a Simple Web Server
+
 - Explanation of basic web server creation using the `Http` package.
 - Transition to using the `Express` package for server creation.
 
 ### Package Management
+
 - Instructions on installing the `express` package using `npm install`.
 - Mention of transitive dependencies and the importance of versioning.
 
 ### Managing Project Dependencies
+
 - Use of `npm update` to update project dependencies.
-- Explanation of updating and installing dependencies with `npm update` and `npm install` when working on another computer.
+- Explanation of updating and installing dependencies with `npm update` and
+  `npm install` when working on another computer.
 
 ### HTTP and HTTPS Servers
+
 - Information on starting a simple HTTP server.
 - Brief mention of hosting over SSL for an HTTPS server.
 
 ### Development Workflow
-- Recommendation to use `nodemon` to avoid manual server restarts after each change.
+
+- Recommendation to use `nodemon` to avoid manual server restarts after each
+  change.
 
 ### Introduction to REST
+
 - Teasing about REST and a brief explanation of REST methodologies.
 - Overview of REST endpoints and their current status in the exercise.
 
 ### Handling Responses and Status Codes
-- Explanation of HTTP response codes, including 200 (success) and 404 (not found).
+
+- Explanation of HTTP response codes, including 200 (success) and 404 (not
+  found).
 - Introducing the concept of returning 204 for successful resource deletion.
 
 ### API Testing
-- Mention of tools like Postman, Webstorm HTTP client, and VS Code REST client for making API calls.
+
+- Mention of tools like Postman, Webstorm HTTP client, and VS Code REST client
+  for making API calls.
 
 ### Middleware
-- Introduction to middleware and its role in handling request and response objects.
+
+- Introduction to middleware and its role in handling request and response
+  objects.
 - Explanation of the built-in JSON parser middleware in Express.
 - Demonstration of creating custom middleware functions.
 
 ### Middleware Exercises
-- Creation of middleware functions, such as request logger and unknown endpoint handler.
+
+- Creation of middleware functions, such as request logger and unknown endpoint
+  handler.
 
 ### Logging with Morgan
+
 - Introduction to the `Morgan` package for logging network requests.
 
 ### Section A Overview
+
 - Summarization of the content covered in Section A of part three.
 
-
 ## Deploying app to internet
-
 
 ## Saving data to MongoDB
 
 ### Topic and Focus
 
-The discussion revolves around fullstackopen.com, specifically Part Three, Section C, focusing on saving data to MongoDB.
+The discussion revolves around fullstackopen.com, specifically Part Three,
+Section C, focusing on saving data to MongoDB.
 
 ### Sections and Subsections
 
-- Section Two is briefly mentioned, with the intention to come back to it after going through Section D.
-- The speaker plans to cover MongoDB-related topics, such as schema, model, document creation, update, delete, retrieval, and the use of packages like `env` and `MongoJS`.
+- Section Two is briefly mentioned, with the intention to come back to it after
+  going through Section D.
+- The speaker plans to cover MongoDB-related topics, such as schema, model,
+  document creation, update, delete, retrieval, and the use of packages like
+  `env` and `MongoJS`.
 
 ### Introduction to MongoDB
 
 - MongoDB is introduced as a NoSQL document-based database.
-- Schema is explained as a way to define data structure, and models are used to create instances of records in a collection.
+- Schema is explained as a way to define data structure, and models are used to
+  create instances of records in a collection.
 
 ### Use of MongoDB Atlas
 
-- MongoDB Atlas is mentioned as the tool used for this, emphasizing its NoSQL nature.
+- MongoDB Atlas is mentioned as the tool used for this, emphasizing its NoSQL
+  nature.
 
 ### Use of Mongoose
 
-- Mongoose is introduced as an alternative to the official MongoDB Node.js driver, offering a high-level API and more abstraction.
+- Mongoose is introduced as an alternative to the official MongoDB Node.js
+  driver, offering a high-level API and more abstraction.
 - Mongoose is described as an Object Document Mapper (ODM).
 
 ### Connection Setup and Configuration
 
-- The setup process is briefly mentioned, including the use of Mongoose instead of the official MongoDB driver.
-- Connection setup, schema creation, model creation, and saving a note are explained.
+- The setup process is briefly mentioned, including the use of Mongoose instead
+  of the official MongoDB driver.
+- Connection setup, schema creation, model creation, and saving a note are
+  explained.
 
 ### Database Operations
 
-- Instructions on creating, updating, deleting, and fetching data from the database using models and methods like `find`.
+- Instructions on creating, updating, deleting, and fetching data from the
+  database using models and methods like `find`.
 
 ### Database Configuration and Modules
 
-- The process of moving the database configuration into separate modules is explained.
+- The process of moving the database configuration into separate modules is
+  explained.
 
 ### Error Handling
 
 - Error handling is discussed, and a middleware approach is introduced.
-- Differentiating between server-side and user-side errors and assigning appropriate response codes (500 and 400) is explained.
+- Differentiating between server-side and user-side errors and assigning
+  appropriate response codes (500 and 400) is explained.
 
 ### Middleware Order
 
-- The importance of middleware order is highlighted, emphasizing the placement of the error handler before the unknown endpoints middleware.
+- The importance of middleware order is highlighted, emphasizing the placement
+  of the error handler before the unknown endpoints middleware.
 
 ### Module Usage
 
-- The use of the `dotenv` library for storing critical information and accessing it through environment variables is explained.
-- The integration of the library using `require('dotenv').config()` is mentioned.
+- The use of the `dotenv` library for storing critical information and accessing
+  it through environment variables is explained.
+- The integration of the library using `require('dotenv').config()` is
+  mentioned.
 
 ### Server Structure
 
-- The ideal order of middleware is provided, starting with static, then `express.json`, logger, API calls, unknown endpoint, error handler, and finally, specific operations like `findById` and `update`.
+- The ideal order of middleware is provided, starting with static, then
+  `express.json`, logger, API calls, unknown endpoint, error handler, and
+  finally, specific operations like `findById` and `update`.
 
 ### Conclusion
 
-The section concludes by summarizing the covered topics as a basic introduction to MongoDB, with a reference to fullstackopen.com.
-
+The section concludes by summarizing the covered topics as a basic introduction
+to MongoDB, with a reference to fullstackopen.com.
 
 ## Validation and ESLint
 
 ### Validation with MongoDB Schema
 
 - Discusses the importance of validating data before sending it to the database.
-- Mentions two types of validators: inbuilt validation functions and custom validation functions.
+- Mentions two types of validators: inbuilt validation functions and custom
+  validation functions.
 
 ### Eslint for Static Analysis
 
@@ -144,16 +179,19 @@ The section concludes by summarizing the covered topics as a basic introduction 
 
 ### Mongoose Validation
 
-- Recommends using Mongoose's validation functionality for validating data format.
+- Recommends using Mongoose's validation functionality for validating data
+  format.
 - Suggests defining specific validation rules for each field in the schema.
 
 ### Validator Types
 
-- Mentions both built-in functions and custom validator functionality for defining validation rules.
+- Mentions both built-in functions and custom validator functionality for
+  defining validation rules.
 
 ### Practical Exercise
 
-- Describes a practical exercise related to using built-in and custom validator functionality.
+- Describes a practical exercise related to using built-in and custom validator
+  functionality.
 
 ### Error Handling in Middleware
 
@@ -161,12 +199,39 @@ The section concludes by summarizing the covered topics as a basic introduction 
 
 ### Deployment (Skipped)
 
-- Skips over the deployment part, which will be covered in the next section/part.
+- Skips over the deployment part, which will be covered in the next
+  section/part.
 
 ### ESLint Configuration
 
-- Explains how to use ESLint, including installing it, creating a configuration file, and defining rules.
+- Explains how to use ESLint, including installing it, creating a configuration
+  file, and defining rules.
 - Demonstrates the creation of a custom script for running ESLint.
+
+```js
+module.exports = {
+  env: {
+    commonjs: true,
+    es2021: true,
+    node: true,
+  },
+  extends: 'eslint:recommended',
+  parserOptions: {
+    ecmaVersion: 'latest',
+  },
+  rules: {
+    indent: ['error', 4],
+    'linebreak-style': ['error', 'unix'],
+    quotes: ['error', 'single'],
+    semi: ['error', 'never'],
+    eqeqeq: 'error',
+    'no-trailing-spaces': 'error',
+    'object-curly-spacing': ['error', 'always'],
+    'arrow-spacing': ['error', { before: true, after: true }],
+    'no-console': 0,
+  },
+};
+```
 
 ### ESLint Ignore File
 
@@ -174,7 +239,8 @@ The section concludes by summarizing the covered topics as a basic introduction 
 
 ### VS Code Plugin and Rules
 
-- Introduces ESLint VS Code plugin and explains some rules and how they can be used.
+- Introduces ESLint VS Code plugin and explains some rules and how they can be
+  used.
 
 ### Transition to the Next Part
 
