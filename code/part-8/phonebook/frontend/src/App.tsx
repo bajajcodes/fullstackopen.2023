@@ -1,37 +1,18 @@
 import React from 'react';
+import { useQuery } from '@apollo/client';
 import './App.css';
-import { gql, useQuery } from '@apollo/client';
 import { Person } from './components/person';
 import type { PersonInterface } from './types';
-
-const GET_ALL_PERSONS = gql`
-  query {
-    allPersons {
-      name
-      id
-    }
-  }
-`;
-
-const FIND_PERSON = gql`
-  query findPersonByName($nameToSearch: String!) {
-    findPerson(name: $nameToSearch) {
-      name
-      phone
-      id
-      address {
-        street
-        city
-      }
-    }
-  }
-`;
+import { PersonForm } from './components/person-form';
+import { FIND_PERSON, GET_ALL_PERSONS } from './queries';
 
 function App() {
   const [nameToSearch, setNameToSearch] = React.useState<string | null>(null);
   const { data: persons, loading: loadingPersons } = useQuery<{
     allPersons: Array<PersonInterface>;
-  }>(GET_ALL_PERSONS);
+  }>(GET_ALL_PERSONS, {
+    // pollInterval: 2000,
+  });
   const { data: person, loading: loadingPerson } = useQuery(FIND_PERSON, {
     variables: { nameToSearch },
     skip: !nameToSearch,
@@ -63,6 +44,7 @@ function App() {
           </li>
         ))}
       </ul>
+      <PersonForm />
     </section>
   );
 }
