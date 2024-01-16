@@ -1,12 +1,15 @@
 import React from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_PERSON, GET_ALL_PERSONS } from '../queries';
+import { KEYS } from '../constants';
 
-const KEYS = ['name', 'phone', 'street', 'city'];
-
-const PersonForm = () => {
+const PersonForm = ({ setError }: { setError: (message: string) => void }) => {
   const [createPerson] = useMutation(CREATE_PERSON, {
     refetchQueries: [{ query: GET_ALL_PERSONS }],
+    onError: (error) => {
+      const messages = error.graphQLErrors.map((e) => e.message).join('\n');
+      setError(messages);
+    },
   });
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -16,7 +19,6 @@ const PersonForm = () => {
       (acc, key) => ({ ...acc, [key]: formData.get(key) }),
       {}
     );
-    console.log({ variables });
     createPerson({ variables });
     event.currentTarget.reset();
   };

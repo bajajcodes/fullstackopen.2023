@@ -7,3 +7,5 @@ export interface PersonInterface {
     city: string;
   };
 }
+
+export type ErrorMessage = string | null;

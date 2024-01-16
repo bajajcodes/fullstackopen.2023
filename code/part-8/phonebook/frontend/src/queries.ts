@@ -42,4 +42,17 @@ const CREATE_PERSON = gql`
   }
 `;
 
-export { GET_ALL_PERSONS, FIND_PERSON, CREATE_PERSON };
+const EDIT_NUMBER = gql`
+  mutation changeNumber($name: String!, $phone: String!) {
+    editNumber(name: $name, phone: $phone) {
+      name
+      phone
+      address {
+        city
+        street
+      }
+    }
+  }
+`;
+
+export { GET_ALL_PERSONS, FIND_PERSON, CREATE_PERSON, EDIT_NUMBER };
