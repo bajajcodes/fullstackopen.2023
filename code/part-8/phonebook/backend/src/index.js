@@ -80,12 +80,32 @@ const resolvers = {
   Mutation: {
     addPerson: async (_, args) => {
       const person = new Person({ ...args });
-      return person.save();
+      try {
+        return await person.save();
+      } catch (error) {
+        throw new GraphQLError('Saving person failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error,
+          },
+        });
+      }
     },
     editNumber: async (_, args) => {
       const person = await Person.findOne({ name: args.name });
       person.phone = args.phone;
-      return person.save();
+      try {
+        return await person.save();
+      } catch (error) {
+        throw new GraphQLError('Saving number failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.phone,
+            error,
+          },
+        });
+      }
     },
   },
 };
