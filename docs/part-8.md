@@ -45,7 +45,7 @@ type Query {
 `;
 ```
 
-# `Resolvers` for responding to queries
+### `Resolvers` for responding to queries
 
 `Resolvers` determine/define how `GraphQL` queries are responded to. `Resolvers`
 correspond to queries defined in the `Schema`. If `Resolver` is not provided,
@@ -121,7 +121,7 @@ enum YesNo{
 }
 ```
 
-### Implement GraphQL server using Apollo Server 
+### Implement GraphQL server using Apollo Server
 
 ```sh
 mkdir {{folder_name}}
@@ -135,31 +135,31 @@ touch index.js
 //source: fullstackopen[dot]com
 //index.js
 
-const { ApolloServer } = require('@apollo/server')
-const { startStandaloneServer } = require('@apollo/server/standalone')
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
 
 let persons = [
   {
-    name: "Arto Hellas",
-    phone: "040-123543",
-    street: "Tapiolankatu 5 A",
-    city: "Espoo",
-    id: "3d594650-3436-11e9-bc57-8b80ba54c431"
+    name: 'Arto Hellas',
+    phone: '040-123543',
+    street: 'Tapiolankatu 5 A',
+    city: 'Espoo',
+    id: '3d594650-3436-11e9-bc57-8b80ba54c431',
   },
   {
-    name: "Matti Luukkainen",
-    phone: "040-432342",
-    street: "Malminkaari 10 A",
-    city: "Helsinki",
-    id: '3d599470-3436-11e9-bc57-8b80ba54c431'
+    name: 'Matti Luukkainen',
+    phone: '040-432342',
+    street: 'Malminkaari 10 A',
+    city: 'Helsinki',
+    id: '3d599470-3436-11e9-bc57-8b80ba54c431',
   },
   {
-    name: "Venla Ruuska",
-    street: "Nallemäentie 22 C",
-    city: "Helsinki",
-    id: '3d599471-3436-11e9-bc57-8b80ba54c431'
+    name: 'Venla Ruuska',
+    street: 'Nallemäentie 22 C',
+    city: 'Helsinki',
+    id: '3d599471-3436-11e9-bc57-8b80ba54c431',
   },
-]
+];
 
 const typeDefs = `
   type Person {
@@ -175,31 +175,29 @@ const typeDefs = `
     allPersons: [Person!]!
     findPerson(name: String!): Person
   }
-`
+`;
 
 const resolvers = {
   Query: {
     personCount: () => persons.length,
     allPersons: () => persons,
-    findPerson: (root, args) =>
-      persons.find(p => p.name === args.name)
-  }
-}
+    findPerson: (root, args) => persons.find((p) => p.name === args.name),
+  },
+};
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-})
+});
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
-  console.log(`Server ready at ${url}`)
-})
-
+  console.log(`Server ready at ${url}`);
+});
 ```
 
-#### Open Questions
+### Open Questions
 
 - What is `GraphQL`?
 - Why `GraphQL` was created?
@@ -207,6 +205,195 @@ startStandaloneServer(server, {
 - How to choose what to use for project `REST` or `GraphQL`?
 - What is `GraphQL` schema? How to differentiate between query and data-format
   in schema?
-- Which are Good methods/techniques for describing Schema(Query, Mutatation, RecordStructure) and Resolvers?
+- Which are Good methods/techniques for describing Schema(Query, Mutatation,
+  RecordStructure) and Resolvers?
 - Schema Queries and Mutations with and without default resolvers?
 
+## SectionB: React and GraphQL
+
+This section helps in understanding how to make queries, mutations, cache
+revalidation from frontend using react-apollo-client.
+
+```sh
+# install depedancies
+npm i @apollo/client graphql
+```
+
+```ts
+//import depedancies and create client or query-client
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000',
+  cache: new InMemoryCache(),
+});
+```
+
+```ts
+//provide it to application
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <ApolloProvider client={client}>
+    <App />
+  </ApolloProvider>
+);
+```
+
+### Make `Queries` to GraphQL Server
+
+Using `useQuery` hook to make queries.
+
+```ts
+useQuery(QUERY, {{OPTIONS}})
+```
+
+Define a query using `gql`
+
+```ts
+//queries.ts
+
+const ALL_VERSIONS = gql`
+query AllVersions {
+  allVersions{
+    version
+    createdAt
+    ...
+  }
+}
+`;
+
+export { ALL_VERSIONS };
+```
+
+To get loading-state, error and data desctructre useQuery returnType.
+
+```ts
+//alterative-1
+ const result = useQuery(ALL_PERSONS)
+ //alternative-2
+ const {loading, data, error} = useQuery(ALL_PERSONS)
+ //alternative-3
+  const {loading, data} = useQuery(ALL_PERSONS, {
+    onError: () => void
+  })
+```
+
+To pass variables to a query, pass it inside the options.
+
+```ts
+//queries.ts
+export const FIND_PERSON = gql`
+  query findPersonByName($nameToSearch: String!) {
+    findPerson(name: $nameToSearch) {
+      name
+      phone
+      id
+      address {
+        street
+        city
+      }
+    }
+  }
+`;
+```
+
+```ts
+  const result = useQuery(FIND_PERSON, {
+    variables: {{variables}},
+  })
+```
+
+### Handle Mutations
+
+To do mutations `useMutation` hook is used. This hooks takes the mutation query
+and options and returns array type return value. In which extract out property
+of name of `muation` query. <br />
+
+The extracted property is used to send mutation query.
+
+```ts
+//define-query
+//queries.ts
+
+const CREATE_PERSON = gql`
+  mutation createPerson(
+    $name: String!
+    $street: String!
+    $city: String!
+    $phone: String
+  ) {
+    addPerson(name: $name, street: $street, city: $city, phone: $phone) {
+      name
+      phone
+      id
+      address {
+        street
+        city
+      }
+    }
+  }
+`;
+```
+
+```ts
+const [createPerson] = useMutation(CREATE_PERSON)
+
+function handler(){
+  createPerson({variables: {{variables}}})
+}
+```
+
+After each mutation cache is invalid or out of sync to server state. To validate
+cache or to keep the cache in sync to the server state we have following
+options:
+
+- **pollInterval:** repeatedly make the query after `x` miliseconds
+
+```ts
+useQuery(QUERY, {
+  pollInterval: {{milliseconds}}
+})
+```
+
+- **refetchQueries:** It is option pass to `useMutation` hook which takes the
+  queries to refetch post succesful mutation action/side-effect/operation.
+
+```ts
+useMutation(MUTATION, {
+  refetchQueries: [{ query: QUERY }],
+});
+```
+
+### Application state and Apollo Client Relationship
+
+> management of the applications state has mostly become the responsibility of
+> Apollo Client. This is a quite typical solution for GraphQL applications.
+
+~fullstackopen[dot]com
+
+### Open Questions
+
+- use of reactrouterv6 and apollo client?
+- How GraphQL Helps or What help does it provide to frontend?
+  (https://fullstackopen.com/en/part8/react_and_graph_ql#cache,
+  https://fullstackopen.com/en/part8/react_and_graph_ql#updating-a-phone-number,
+  https://fullstackopen.com/en/part8/react_and_graph_ql#apollo-client-and-the-applications-state)
+- How GraphQL helps with frontend application state?
+
+## SectionC: Database and User Administration
+
+### Open Questions
+
+### Misc
+
+## SectionD: Login and Updating the Cache
+
+### Open Questions
+
+### Misc
+
+## SectionE: Fragments and Subscriptions
+
+### Open Questions
+
+### Misc
