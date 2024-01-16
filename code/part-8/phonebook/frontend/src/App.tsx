@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import './App.css';
+import { gql, useQuery } from '@apollo/client';
+import { Person } from './components/person';
+import type { PersonInterface } from './types';
+
+const GET_ALL_PERSONS = gql`
+  query {
+    allPersons {
+      name
+      id
+    }
+  }
+`;
+
+const FIND_PERSON = gql`
+  query findPersonByName($nameToSearch: String!) {
+    findPerson(name: $nameToSearch) {
+      name
+      phone
+      id
+      address {
+        street
+        city
+      }
+    }
+  }
+`;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [nameToSearch, setNameToSearch] = React.useState<string | null>(null);
+  const { data: persons, loading: loadingPersons } = useQuery<{
+    allPersons: Array<PersonInterface>;
+  }>(GET_ALL_PERSONS);
+  const { data: person, loading: loadingPerson } = useQuery(FIND_PERSON, {
+    variables: { nameToSearch },
+    skip: !nameToSearch,
+  });
+
+  if (loadingPerson || loadingPersons) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (nameToSearch && person) {
+    return (
+      <Person
+        person={person.findPerson}
+        onClose={() => setNameToSearch(null)}
+      />
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <section>
+      <h2>Persons</h2>
+      <ul>
+        {persons?.allPersons.map((p) => (
+          <li key={p.id}>
+            {p.name}&nbsp;
+            <button onClick={() => setNameToSearch(p.name)} type="button">
+              show address
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }
 
-export default App
+export default App;
