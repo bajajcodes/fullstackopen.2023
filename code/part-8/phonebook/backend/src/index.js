@@ -2,6 +2,22 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { GraphQLError } from 'graphql';
 import { v1 as uuid } from 'uuid';
+import mongoose from 'mongoose';
+import * as logger from './utils/logger.js';
+import { MONGODB_URI } from './utils/config.js';
+
+mongoose.set('strictQuery', false);
+
+logger.info('connecting to', MONGODB_URI);
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    logger.info('connected to MongoDB');
+  })
+  .catch((error) => {
+    logger.error('error connection to MongoDB:', error.message);
+  });
 
 const persons = [
   {
