@@ -101,13 +101,13 @@ const resolvers = {
       return person;
     },
     editNumber: (_, args) => {
-      const person = persons.find((p) => p.name === args.name);
-      if (!person) {
+      const index = persons.findIndex((p) => p.name === args.name);
+      if (index < 0) {
         return null;
       }
-
+      const person = persons[index];
       const updatedPerson = { ...person, phone: args.phone };
-      persons = persons.map((p) => (p.name === args.name ? updatedPerson : p));
+      persons.splice(index, 1, updatedPerson);
       return updatedPerson;
     },
   },
