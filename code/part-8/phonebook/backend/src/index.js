@@ -5,6 +5,7 @@ import { v1 as uuid } from 'uuid';
 import mongoose from 'mongoose';
 import * as logger from './utils/logger.js';
 import { MONGODB_URI } from './utils/config.js';
+import { Person } from './models/person.js';
 
 mongoose.set('strictQuery', false);
 
@@ -18,29 +19,6 @@ mongoose
   .catch((error) => {
     logger.error('error connection to MongoDB:', error.message);
   });
-
-const persons = [
-  {
-    name: 'Arto Hellas',
-    phone: '040-123543',
-    street: 'Tapiolankatu 5 A',
-    city: 'Espoo',
-    id: '3d594650-3436-11e9-bc57-8b80ba54c431',
-  },
-  {
-    name: 'Matti Luukkainen',
-    phone: '040-432342',
-    street: 'Malminkaari 10 A',
-    city: 'Helsinki',
-    id: '3d599470-3436-11e9-bc57-8b80ba54c431',
-  },
-  {
-    name: 'Venla Ruuska',
-    street: 'Nallemäentie 22 C',
-    city: 'Helsinki',
-    id: '3d599471-3436-11e9-bc57-8b80ba54c431',
-  },
-];
 
 const typeDefs = `
 
@@ -84,17 +62,14 @@ type Mutation {
 
 const resolvers = {
   Query: {
-    personCount: () => persons.length,
-    allPersons: (_, args) => {
-      if (!args.phone) return persons;
-      return persons.filter((p) => (args.phone === 'YES' ? p.phone : !p.phone));
+    personCount: async () => Person.collection.countDocuments(),
+    allPersons: async (_, args) => {
+      if (!args.phone) return Person.find({});
+      return Person.find({ phone: { $exists: args.phone === 'YES' } });
     },
-    findPerson: (root, args) =>
-      persons.find((p) => p.name === args.name) || null,
+    findPerson: async (_, { name }) => Person.findOne({ name }),
   },
   Person: {
-    name: (root) => root.name,
-    id: (root) => root.id,
     address: (root) => {
       return {
         street: root.street,
@@ -103,28 +78,14 @@ const resolvers = {
     },
   },
   Mutation: {
-    addPerson: (_, args) => {
-      if (persons.find((p) => p.name === args.name)) {
-        throw new GraphQLError('Name must be unique', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            invalidArgs: args.name,
-          },
-        });
-      }
-      const person = { ...args, id: uuid() };
-      persons.push(person);
-      return person;
+    addPerson: async (_, args) => {
+      const person = new Person({ ...args });
+      return person.save();
     },
-    editNumber: (_, args) => {
-      const index = persons.findIndex((p) => p.name === args.name);
-      if (index < 0) {
-        return null;
-      }
-      const person = persons[index];
-      const updatedPerson = { ...person, phone: args.phone };
-      persons.splice(index, 1, updatedPerson);
-      return updatedPerson;
+    editNumber: async (_, args) => {
+      const person = await Person.findOne({ name: args.name });
+      person.phone = args.phone;
+      return person.save();
     },
   },
 };
