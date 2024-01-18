@@ -382,9 +382,168 @@ useMutation(MUTATION, {
 
 ## SectionC: Database and User Administration
 
+This section is simple introduction to using authentication with graphql and
+mongodb with graphql. <br />
+
+```sh
+npm install mongoose dotenv
+npm install mongoose-unique-validator
+```
+
+Firstly define all the schemas in the `src/models` folder and export the model.
+Using 3rd party plugin `mongoose-unique-validator` for ensuring records are
+unqiue. To make sure a field is unique add `unique: true` to the field.
+
+```js
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+  },
+  phone: {
+    type: String,
+    minlength: 5,
+  },
+  street: {
+    type: String,
+    required: true,
+    minlength: 5,
+  },
+  city: {
+    type: String,
+    required: true,
+    minlength: 3,
+  },
+});
+schema.use(unqiueValidator);
+
+const User = mongoose.model('User', userSchema);
+export { User };
+```
+
+The collection name will be saved as `Users`, automatically done by mongoose
+because collection named are saved plularly. <br /> Now instead of variables,
+`mongodb` will be used. <br />
+
+After this use `Models` inside resolvers to resolve query, mutation and types.
+Apollo Server will resolve and return promise value for us. <br />
+
+> The changes are pretty straightforward. However, there are a few noteworthy
+> things. As we remember, in Mongo, the identifying field of an object is called
+> \_id and we previously had to parse the name of the field to id ourselves. Now
+> GraphQL can do this automatically. Another noteworthy thing is that the
+> resolver functions now return a promise, when they previously returned normal
+> objects. When a resolver returns a promise, Apollo server sends back the value
+> which the promise resolves to. ~fullstackopen[dot]com
+
+If validations use GraphQL Error **Ferociously**.
+
+### User and Login
+
+- For all mutations which require authenitcation check if user is authorized. By
+  check if currentUser object of type `User` exists on third parameter of
+  mutation request.
+
+```ts
+Mutation: {
+  ...,
+  addUser: async (root, args, context) => {
+    if(!context.currentUser){
+              throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+    }
+    try{
+      //...
+    }catch(error){
+        //...
+    }
+  }
+}
+```
+
+- Now wondering what is `currentUser` and `context`. Now let's add mutation for
+  `login` and `createUser` before `currentUser`.
+
+```ts
+//login is simple one password for all make it strong following part-4
+const resolver = {
+  Mutation: {
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== 'secret') {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    },
+    createUser: async (root, args) => {
+      const user = new User({ username: args.username });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError('Creating the user failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.username,
+            error,
+          },
+        });
+      });
+    },
+  },
+};
+```
+
+- Let's revil `currentUser`.
+
+```ts
+startStandaloneServer(_, {
+  //...
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null;
+    if (auth && auth.startsWith('Bearer ')) {
+      const decodedToken = jwt.verify(
+        auth.substring(7),
+        process.env.JWT_SECRET
+      );
+      const currentUser = await User.findById(decodedToken.id).populate(
+        'friends'
+      );
+      return { currentUser };
+    }
+  },
+});
+```
+
 ### Open Questions
 
+- What are the paramters authetication using REST and GraphQL?
+- What are the paramters to compare CRUD operations(forDB) using REST and
+  GraphQL?
+- Compare Part4 and Part8 on the topic in context in both parts which choice
+  REST or GraphQL stands on top of whom(Fight Declared Virtually)?
+- Is TDD with GraphQL a good choice?
+
 ### Misc
+
+- Implement Following user_adminstration using GRAPHQL.
+  (https://fullstackopen.com/en/part4/user_administration)
 
 ## SectionD: Login and Updating the Cache
 
