@@ -9,3 +9,4 @@ export interface PersonInterface {
 }
 
 export type ErrorMessage = string | null;
+export type Token = string | null;
