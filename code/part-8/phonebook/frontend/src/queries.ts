@@ -55,4 +55,12 @@ const EDIT_NUMBER = gql`
   }
 `;
 
+export const LOGIN = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      value
+    }
+  }
+`;
+
 export { GET_ALL_PERSONS, FIND_PERSON, CREATE_PERSON, EDIT_NUMBER };
