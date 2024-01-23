@@ -5,11 +5,16 @@ import { KEYS } from '../constants';
 
 const PersonForm = ({ setError }: { setError: (message: string) => void }) => {
   const [createPerson] = useMutation(CREATE_PERSON, {
-    refetchQueries: [{ query: GET_ALL_PERSONS }],
     onError: (error) => {
-      console.error({ error });
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
       setError(messages);
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: GET_ALL_PERSONS }, ({ allPersons }) => {
+        return {
+          allPersons: allPersons.concat(response.data.addPerson),
+        };
+      });
     },
   });
 
