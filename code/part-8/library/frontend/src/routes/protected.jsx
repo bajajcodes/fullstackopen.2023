@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 const Authors = lazy(() => import('../components/Authors'));
 const Books = lazy(() => import('../components/Books'));
 const NewBook = lazy(() => import('../components/NewBook'));
+const Recommendations = lazy(() => import('../components/Recommendations'));
 
 export function protectedRoutes() {
   return {
@@ -25,6 +26,10 @@ export function protectedRoutes() {
       {
         path: 'add',
         element: <NewBook />,
+      },
+      {
+        path: 'recommendations',
+        element: <Recommendations />,
       },
       { path: '*', element: <Navigate to="/" replace /> },
     ],
