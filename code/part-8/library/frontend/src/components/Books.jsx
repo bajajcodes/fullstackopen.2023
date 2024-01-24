@@ -1,12 +1,14 @@
 import { useQuery } from '@apollo/client';
-import { GET_BOOKS, GET_GENRES } from '../queries';
+import { GET_BOOKS, GET_FAVOURITE_GENRE_BOOKS, GET_GENRES } from '../queries';
 import React from 'react';
 
 const Books = (props) => {
   const [filter, setFilter] = React.useState(null);
-  const { loading, data } = useQuery(GET_BOOKS, {
+  const { loading, data } = useQuery(GET_FAVOURITE_GENRE_BOOKS, {
+    variables: { genre: filter },
     onError: (error) => {
       const message = error.graphQLErrors.map((e) => e.message).join(' \n');
+      console.error({ message });
       //TODO: pass setError function
       props?.setError(message);
     },
@@ -40,7 +42,9 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
-
+      <p>
+        is genre <strong>{filter || 'AllGenres'}</strong>
+      </p>
       <table>
         <tbody>
           <tr>

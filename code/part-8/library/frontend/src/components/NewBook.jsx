@@ -1,6 +1,11 @@
 import { useMutation } from '@apollo/client';
 import React from 'react';
-import { ADD_BOOK, GET_AUTHORS, GET_BOOKS } from '../queries';
+import {
+  ADD_BOOK,
+  GET_AUTHORS,
+  GET_BOOKS,
+  GET_FAVOURITE_GENRE_BOOKS,
+} from '../queries';
 
 const KEYS = ['title', 'author', 'published'];
 
@@ -8,11 +13,24 @@ const NewBook = () => {
   const ref = React.useRef(null);
   const [genres, setGenres] = React.useState([]);
   const [AddBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: GET_AUTHORS }, { query: GET_BOOKS }],
+    refetchQueries: [
+      { query: GET_AUTHORS },
+      { query: GET_FAVOURITE_GENRE_BOOKS },
+    ],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
       console.error(messages);
     },
+    // update: (cache, response) => {
+    //   cache.updateQuery(
+    //     { query: GET_FAVOURITE_GENRE_BOOKS },
+    //     ({ allBooks }) => {
+    //       return {
+    //         allBooks: allBooks.concat(response.data.addBook),
+    //       };
+    //     }
+    //   );
+    // },
   });
   const submit = async (event) => {
     event.preventDefault();
