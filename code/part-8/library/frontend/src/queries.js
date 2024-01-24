@@ -26,6 +26,12 @@ const GET_BOOKS = gql`
   }
 `;
 
+const GET_GENRES = gql`
+query GetGenres {
+  allGenres
+}
+`;
+
 const ADD_BOOK = gql`
   mutation AddBook(
     $title: String!
@@ -39,11 +45,15 @@ const ADD_BOOK = gql`
       published: $published
       genres: $genres
     ) {
-      title
-      published
-      id
+      author {
+        name
+        born
+        id
+      }
       genres
-      author
+      id
+      published
+      title
     }
   }
 `;
@@ -53,7 +63,6 @@ const UPDATE_AUTHOR_BIRTH_YEAR = gql`
     editAuthor(name: $name, setBornTo: $setBornTo) {
       born
       name
-      bookCount
       id
     }
   }
@@ -77,10 +86,11 @@ const LOGIN = gql`
 `;
 
 export {
+  LOGIN,
+  ADD_BOOK,
+  UPDATE_AUTHOR_BIRTH_YEAR,
+  GET_GENRES,
   GET_AUTHORS,
   GET_BOOKS,
   GET_AUTHORS_BIRTH_YEAR,
-  ADD_BOOK,
-  LOGIN,
-  UPDATE_AUTHOR_BIRTH_YEAR,
 };

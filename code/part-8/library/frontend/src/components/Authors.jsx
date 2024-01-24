@@ -6,6 +6,7 @@ const Authors = (props) => {
   const { loading, data } = useQuery(GET_AUTHORS, {
     onError: (error) => {
       const message = error.graphQLErrors.map((e) => e.message).join(' \n');
+      console.error({ message });
       //TODO: pass setError function
       props?.setError(message);
     },

@@ -11,7 +11,7 @@ const SetBornTo = (props) => {
     refetchQueries: [{ query: GET_AUTHORS }],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
-      console.error(messages);
+      console.error({messages, error});
     },
   });
   const submit = async (event) => {

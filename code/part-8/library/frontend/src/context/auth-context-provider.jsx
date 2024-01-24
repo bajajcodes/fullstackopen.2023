@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as AuthLocalStorage from '../utils/local-storage';
 import { AuthContext } from './auth-context';
 
@@ -22,6 +22,13 @@ export const AuthContextProvider = (props) => {
   };
 
   console.log({ token });
+
+  useEffect(() => {
+    const token = AuthLocalStorage.getToken();
+    if (!token) return;
+    console.log({ token }, 'useEffect');
+    setState(token);
+  }, []);
 
   return (
     <AuthContext.Provider

@@ -61,6 +61,7 @@ type Author {
     allBooks(author: String, genre: String): [Book!]
     allAuthors: [Author!]
     allUsers: [User!]
+    allGenres: [String!]!
     me: User
   }
 
@@ -77,6 +78,24 @@ const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
+    allGenres: async () => {
+      const books = await Book.find(
+        {},
+        {
+          genres: 1,
+        }
+      );
+      const genres = Object.keys(
+        books
+          .flatMap((book) => book.genres)
+          .reduce(
+            (acc, genre) => (acc[genre] ? acc : { ...acc, [genre]: true }),
+            {}
+          )
+      );
+      logger.info({ genres });
+      return genres;
+    },
     allBooks: async (_, args) => {
       const conditions = [];
 
@@ -112,9 +131,7 @@ const resolvers = {
     genres: (root) => root.genres,
     //TODO: use populate method
     author: async (root) => {
-      logger.info({ root });
       const author = await Author.findById(root.author);
-      logger.info({ author });
       return author;
     },
     id: (root) => root.id,
@@ -175,12 +192,10 @@ const resolvers = {
       }
     },
     createUser: async (_, args) => {
-      logger.info(args);
       const user = new User(args);
       try {
         return await user.save();
       } catch (error) {
-        logger.info({ error });
         const errorMessage = error.message;
         const messageWithSplit = errorMessage.split(':');
         const code = messageWithSplit[0];
@@ -197,7 +212,7 @@ const resolvers = {
     },
     login: async (_, args) => {
       try {
-        const user = await User.find({ username: args.username });
+        const user = await User.findOne({ username: args.username });
         if (!user || args.password !== 'secret') {
           throw new Error(
             `Wrong Credentials user:${user} or password does not match`
@@ -231,7 +246,8 @@ startStandaloneServer(server, {
   listen: { port: 4000 },
   context: async ({ req }) => {
     const auth = req.headers?.authorization || null;
-    if (!auth || !auth.startsWith('Bearer ')) return;
+    const hasToken = auth?.startsWith?.('Bearer ');
+    if (!hasToken) return;
     const token = auth.substring(7);
     const decodedToken = jwt.verify(token, config.JWT_SECRET);
     const currentUser = await User.findById(decodedToken.id);
