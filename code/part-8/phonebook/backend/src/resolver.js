@@ -1,8 +1,11 @@
 import { GraphQLError } from 'graphql';
+import { PubSub } from 'graphql-subscriptions';
 import jwt from 'jsonwebtoken';
 import * as config from './utils/config.js';
 import { Person } from './models/person.js';
 import { User } from './models/user.js';
+
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -53,6 +56,10 @@ const resolvers = {
           },
         });
       }
+
+      pubsub.publish('PERSON_ADDED', {
+        personAdded: person,
+      });
 
       return person;
     },
@@ -122,6 +129,11 @@ const resolvers = {
       const token = jwt.sign(userForToken, config.JWT_SECRET);
 
       return { value: token };
+    },
+  },
+  Subscription: {
+    personAdded: {
+      subscribe: () => pubsub.asyncIterator('PERSON_ADDED'),
     },
   },
 };
