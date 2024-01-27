@@ -10,6 +10,7 @@ import * as config from './utils/config.js';
 import * as logger from './utils/logger.js';
 
 mongoose.set('strictQuery', false);
+mongoose.set('debug', true);
 
 logger.info('connecting to', config.MONGODB_URI);
 
