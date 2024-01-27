@@ -16,6 +16,7 @@ import typeDefs from './schema.js';
 import resolvers from './resolver.js';
 
 mongoose.set('strictQuery', false);
+mongoose.set('debug', true);
 
 logger.info('connecting to', config.MONGODB_URI);
 
