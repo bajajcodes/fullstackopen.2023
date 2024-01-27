@@ -23,7 +23,7 @@ const GET_AUTHORS = gql`
 const GET_BOOKS = gql`
   query AllBooks {
     allBooks {
-      ...AuthorDetails
+      author
       genres
       id
       title
@@ -52,14 +52,13 @@ const GET_USER = gql`
 const GET_FAVOURITE_GENRE_BOOKS = gql`
   query AllBooks($genre: String) {
     allBooks(genre: $genre) {
-      ...AuthorDetails
+      author
       genres
       id
       published
       title
     }
   }
-  ${AUTHOR_DETAILS}
 `;
 
 const ADD_BOOK = gql`
@@ -75,11 +74,7 @@ const ADD_BOOK = gql`
       published: $published
       genres: $genres
     ) {
-      author {
-        name
-        born
-        id
-      }
+      author
       genres
       id
       published
@@ -115,9 +110,22 @@ const LOGIN = gql`
   }
 `;
 
+const NEW_BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      author
+      genres
+      id
+      published
+      title
+    }
+  }
+`;
+
 export {
   LOGIN,
   ADD_BOOK,
+  NEW_BOOK_ADDED,
   UPDATE_AUTHOR_BIRTH_YEAR,
   GET_GENRES,
   GET_AUTHORS,

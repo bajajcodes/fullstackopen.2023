@@ -9,6 +9,7 @@ import {
 
 const KEYS = ['title', 'author', 'published'];
 
+//INFO: update(update-cache) and refetch queries are not working
 const NewBook = () => {
   const ref = React.useRef(null);
   const [genres, setGenres] = React.useState([]);
@@ -19,17 +20,15 @@ const NewBook = () => {
     ],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
-      console.error(messages);
+      console.error({ messages, error });
     },
     // update: (cache, response) => {
-    //   cache.updateQuery(
-    //     { query: GET_FAVOURITE_GENRE_BOOKS },
-    //     ({ allBooks }) => {
-    //       return {
-    //         allBooks: allBooks.concat(response.data.addBook),
-    //       };
-    //     }
-    //   );
+    //   cache.updateQuery({ query: GET_FAVOURITE_GENRE_BOOKS }, (props) => {
+    //     console.log({ props, response, cache });
+    //     return {
+    //       allBooks: props.allBooks.concat(response.data.addBook),
+    //     };
+    //   });
     // },
   });
   const submit = async (event) => {

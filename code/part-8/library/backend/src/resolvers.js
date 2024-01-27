@@ -1,12 +1,14 @@
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
+import { PubSub } from 'graphql-subscriptions';
 import { Book } from './models/book.js';
 import { Author } from './models/author.js';
 import { User } from './models/user.js';
 import * as config from './utils/config.js';
 import * as logger from './utils/logger.js';
 
-//TODO: populate Book with author details
+const pubsub = new PubSub();
+
 const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
@@ -26,7 +28,6 @@ const resolvers = {
             {}
           )
       );
-      logger.info({ genres });
       return genres;
     },
     allBooks: async (_, args) => {
@@ -52,6 +53,7 @@ const resolvers = {
               $or: conditions,
             };
 
+      //TODO: populate author details
       return await Book.find(findQuery);
     },
     allAuthors: async () => await Author.find({}),
@@ -59,15 +61,10 @@ const resolvers = {
     me: async (root, args, context) => context?.currentUser || null,
   },
   Book: {
-    title: (root) => root.title,
-    published: (root) => root.published,
-    genres: (root) => root.genres,
-    //TODO: use populate method
     author: async (root) => {
       const author = await Author.findById(root.author);
-      return author;
+      return author.name;
     },
-    id: (root) => root.id,
   },
   Mutation: {
     addBook: async (_, { author: authorName, ...rest }, context) => {
@@ -90,7 +87,9 @@ const resolvers = {
           ...rest,
           author: author._id.toString(),
         });
-        return await book.save();
+        const bookAdded = await book.save();
+        pubsub.publish('BOOK_ADDED', { bookAdded });
+        return bookAdded;
       } catch (error) {
         throw new GraphQLError('Failed To Add Book', {
           extensions: {
@@ -166,6 +165,11 @@ const resolvers = {
           },
         });
       }
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator('BOOK_ADDED'),
     },
   },
 };

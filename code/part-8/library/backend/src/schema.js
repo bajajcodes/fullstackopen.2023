@@ -20,7 +20,7 @@ type Author {
     title: String!
     published: Int!
     genres: [String!]
-    author: Author
+    author: String!
     id: ID!
   }
 
@@ -46,6 +46,10 @@ type Author {
     login(username: String!, password: String!): Token
     addAuthor(name: String!, born: Int): Author
     editAuthor(name: String!, setBornTo: Int!): Author
+  }
+
+  type Subscription{
+    bookAdded: Book!
   }
 `;
 

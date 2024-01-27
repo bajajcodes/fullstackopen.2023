@@ -1,5 +1,12 @@
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import express from 'express';
+import cors from 'cors';
+import http from 'http';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import typeDefs from './schema.js';
@@ -27,19 +34,55 @@ const server = new ApolloServer({
   resolvers,
 });
 
-startStandaloneServer(server, {
-  listen: { port: 4000 },
-  context: async ({ req }) => {
-    const auth = req.headers?.authorization || null;
-    const hasToken = auth?.startsWith?.('Bearer ');
-    if (!hasToken) return;
-    const token = auth.substring(7);
-    const decodedToken = jwt.verify(token, config.JWT_SECRET);
-    const currentUser = await User.findById(decodedToken.id);
-    return {
-      currentUser,
-    };
-  },
-}).then(({ url }) => {
-  console.log(`Server ready at ${url}`);
-});
+const start = async () => {
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+  const app = express();
+  const httpServer = http.createServer(app);
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/',
+  });
+  const serverCleanup = useServer({ schema }, wsServer);
+
+  app.use(cors());
+  app.use(express.json());
+
+  const server = new ApolloServer({
+    schema,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              return await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+    ],
+  });
+
+  await server.start();
+
+  app.use(
+    '/',
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const auth = req?.headers?.authorization;
+        if (auth && auth.startsWith('Bearer ')) {
+          const decodedToken = jwt.verify(auth.substring(7), config.JWT_SECRET);
+          const currentUser = await User.findById(decodedToken.id);
+          return { currentUser };
+        }
+      },
+    })
+  );
+
+  httpServer.listen(config.PORT, () => {
+    console.log(`Server is now running on http://localhost:${config.PORT}`);
+  });
+};
+
+start();

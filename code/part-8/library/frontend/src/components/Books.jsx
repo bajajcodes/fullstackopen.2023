@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { GET_BOOKS, GET_FAVOURITE_GENRE_BOOKS, GET_GENRES } from '../queries';
+import { GET_FAVOURITE_GENRE_BOOKS, GET_GENRES } from '../queries';
 import React from 'react';
 
 const Books = (props) => {
@@ -30,14 +30,10 @@ const Books = (props) => {
     return <h2>Loading...</h2>;
   }
 
-  console.log({ data });
-
   const allBooks =
     filter === null
       ? data.allBooks
       : data.allBooks.filter((book) => book.genres.includes(filter));
-
-  console.log({ allBooks });
 
   return (
     <div>
@@ -55,7 +51,7 @@ const Books = (props) => {
           {allBooks.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author.name}</td>
+              <td>{a.author}</td>
               <td>{a.published}</td>
             </tr>
           ))}
