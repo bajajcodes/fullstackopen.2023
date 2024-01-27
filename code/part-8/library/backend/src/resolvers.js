@@ -5,7 +5,6 @@ import { Book } from './models/book.js';
 import { Author } from './models/author.js';
 import { User } from './models/user.js';
 import * as config from './utils/config.js';
-import * as logger from './utils/logger.js';
 
 const pubsub = new PubSub();
 
