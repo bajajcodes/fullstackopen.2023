@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation } from '@apollo/client';
-import { EDIT_NUMBER } from '../queries';
+import { EDIT_NUMBER, GET_ALL_PERSONS } from '../queries';
 import { KEYS } from '../constants';
 
 const PhoneForm = ({ setError }: { setError: (message: string) => void }) => {
@@ -8,6 +8,13 @@ const PhoneForm = ({ setError }: { setError: (message: string) => void }) => {
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
       setError(messages);
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: GET_ALL_PERSONS }, ({ allPersons }) => {
+        return {
+          allPersons: allPersons.concat(response.data.editNumber),
+        };
+      });
     },
   });
 
