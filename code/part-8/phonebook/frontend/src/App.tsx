@@ -1,14 +1,15 @@
 import React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useSubscription } from '@apollo/client';
 import './App.css';
 import { Person } from './components/person';
 import type { ErrorMessage, PersonInterface, Token } from './types';
 import { PersonForm } from './components/person-form';
-import { FIND_PERSON, GET_ALL_PERSONS } from './queries';
+import { FIND_PERSON, GET_ALL_PERSONS, PERSON_ADDED } from './queries';
 import { Notify } from './components/notify';
 import { PhoneForm } from './components/phone-form';
 import { LoginForm } from './components/login-form';
 import { LoginStatus } from './components/login-status';
+import { updateCache } from './util/cache-update';
 
 function App() {
   const [errorMessage, setErrorMessage] = React.useState<ErrorMessage>(null);
@@ -20,6 +21,13 @@ function App() {
   const { data: person, loading: loadingPerson } = useQuery(FIND_PERSON, {
     variables: { nameToSearch },
     skip: !nameToSearch,
+  });
+  useSubscription(PERSON_ADDED, {
+    onData: ({ data, client }) => {
+      const addedPerson = data.data.personAdded;
+      notify(`${addedPerson.name} added`);
+      updateCache(client.cache, { query: GET_ALL_PERSONS }, addedPerson);
+    },
   });
 
   const notify = (message: string | null) => {

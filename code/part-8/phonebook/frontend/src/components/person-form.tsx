@@ -2,6 +2,7 @@ import React from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_PERSON, GET_ALL_PERSONS } from '../queries';
 import { KEYS } from '../constants';
+import { updateCache } from '../util/cache-update';
 
 const PersonForm = ({ setError }: { setError: (message: string) => void }) => {
   const [createPerson] = useMutation(CREATE_PERSON, {
@@ -10,11 +11,13 @@ const PersonForm = ({ setError }: { setError: (message: string) => void }) => {
       setError(messages);
     },
     update: (cache, response) => {
-      cache.updateQuery({ query: GET_ALL_PERSONS }, ({ allPersons }) => {
-        return {
-          allPersons: allPersons.concat(response.data.addPerson),
-        };
-      });
+      updateCache(cache, { query: GET_ALL_PERSONS }, response.data.addPerson);
+      // cache.updateQuery({ query: GET_ALL_PERSONS }, ({ allPersons }) => {
+      //   console.log({ allPersons });
+      //   return {
+      //     allPersons: allPersons.concat(response.data.addPerson),
+      //   };
+      // });
     },
   });
 

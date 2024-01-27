@@ -62,7 +62,7 @@ const EDIT_NUMBER = gql`
   }
 `;
 
-export const LOGIN = gql`
+const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
     login(username: $username, password: $password) {
       value
@@ -70,7 +70,18 @@ export const LOGIN = gql`
   }
 `;
 
+const PERSON_ADDED = gql`
+  subscription {
+    personAdded {
+      ...PersonDetails
+    }
+  }
+  ${PERSON_DETAILS}
+`;
+
 export {
+  LOGIN,
+  PERSON_ADDED,
   GET_ALL_PERSONS,
   FIND_PERSON,
   CREATE_PERSON,
