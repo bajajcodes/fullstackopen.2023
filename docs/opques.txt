@@ -1,0 +1,6 @@
+
+- Why HTTP protocol is not well suited for communication from the server to the browser?
+- Subscriptions let clients subscribe to updates about changes in the server.
+- Why startStandaloneServer does not allow adding subscriptions to the application?
+- 
+
